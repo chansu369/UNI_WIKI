@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 고객정보 처리 SQL -->
+<mapper namespace="com.scmaster.mypro.user.dao.UserMapper">
+
+<!-- 고객정보 조회(한명) -->
+<select id="searchUserOne" parameterType="string" resultType="user">
+	select
+		userid
+		,password
+		,usertype
+		,name
+		,email
+		,subjectnum
+	from
+		wiki_user
+	where
+		userid = #{userid}
+</select>
+
+
+<!-- 회원 가입 -->
+<insert id="joinUser" parameterType="user">
+	insert into
+		wiki_user
+		(
+			userid
+			,password
+			,usertype
+			,name
+			<if test="email != null">
+			,email
+			</if>
+			,subjectnum
+		)values(
+			#{userid}
+			,#{password}
+			,#{usertype}
+			,#{name}
+			<if test="email != null">
+			,#{email}
+			</if>
+			,#{subjectnum}
+		)
+</insert>
+
+
+<!-- 회원 정보 수정 -->
+<update id="updateUser" parameterType="user">
+	update
+		wiki_user
+	set
+		password = #{password}
+		,usertype = #{usertype}
+		,name = #{name}
+		,email = #{email}
+		,subjectnum = #{subjectnum}
+	where
+		userid = #{userid}
+</update>
+	
+</mapper>

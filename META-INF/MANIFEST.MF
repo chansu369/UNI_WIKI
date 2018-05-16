@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: MyProject
+Bundle-SymbolicName: MyProject
+Bundle-Version: 1.0.0.qualifier
+Export-Package: com.scmaster.mypro,
+ com.scmaster.mypro.board.vo,
+ com.scmaster.mypro.common.exception,
+ com.scmaster.mypro.common.interceptor,
+ com.scmaster.mypro.file.vo,
+ com.scmaster.mypro.user.controller,
+ com.scmaster.mypro.user.dao,
+ com.scmaster.mypro.user.vo,
+ mapper,
+ sql

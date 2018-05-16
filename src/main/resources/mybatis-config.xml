@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	
+	<typeAliases>
+		<typeAlias type="com.scmaster.mypro.user.vo.UserVo" alias="user"/>
+		<typeAlias type="com.scmaster.mypro.board.vo.BoardVo" alias="board"/>
+		<typeAlias type="com.scmaster.mypro.board.vo.SubjectVo" alias="subject"/>
+		<typeAlias type="com.scmaster.mypro.board.vo.WaitVo" alias="wait"/>
+		<typeAlias type="com.scmaster.mypro.board.vo.DebateVo" alias="debate"/>
+		<typeAlias type="com.scmaster.mypro.board.vo.ReplyVo" alias="reply"/>
+		<typeAlias type="com.scmaster.mypro.file.vo.FileVo" alias="file"/>
+		<typeAlias type="com.scmaster.mypro.file.vo.LinkVo" alias="link"/>
+	</typeAliases>
+	
+	<mappers>
+		<mapper resource="mapper/userMapper.xml" />
+		<mapper resource="mapper/boardMapper.xml" />
+	</mappers>
+	
+</configuration>

@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 위키보드 처리 SQL -->
+<mapper namespace="com.scmaster.mypro.board.dao.BoardMapper">
+
+
+<!-- 전체글검색 -->
+<select id="selectBoardAll" resultType="board">
+	select
+		boardnum,
+		subjectnum,
+		content,
+		filenum,
+		linknum,
+		inputdate
+	from
+		wiki_board
+	order by
+		boardnum
+</select>
+
+<!-- 위키글 등록 -->
+<insert id="writeWikiBoard" parameterType="board">
+	insert into
+		wiki_board(
+			boardnum
+			,subjectnum
+			,content
+			<if test="filenum != null">
+			,filenum
+			</if>
+			<if test="filenum != null">
+			,linknum
+			</if>
+		)values(
+			wiki_board_seq.nextval
+			,#{subjectnum}
+			,#{content}
+			<if test="filenum != null">
+			,#{filenum}
+			</if>
+			<if test="filenum != null">
+			,#{linknum}
+			</if>
+		)
+</insert>
+
+<!-- 글 수정 -->
+<update id="updateWiki" parameterType="board">
+	update
+		wiki_board
+	set
+		subjectnum = #{subjectnum}
+		,content = #{content}
+		,filenum = #{filenum}
+		,linknum = #{linknum}
+	where
+		boardnum = #{boardnum}
+</update>
+
+<!-- 전공 과목 입력 -->
+<insert id="writeSubject" parameterType="subject">
+	insert into
+		wiki_subject(
+			subjectnum
+			,subjectname
+		)values(
+			wiki_subject_seq.nextval
+			,#{subjectname}
+		)
+
+</insert>
+
+<!-- 전체 전공과목 검색 -->
+<select id="selectSubjectAll" resultType="subject">
+	select
+		subjectnum,
+		subjectname
+	from
+		wiki_subject
+</select>
+	
+	
+
+	
+	
+	
+<!-- 글 하나 검색 -->
+<select id="selectwikiOne" parameterType="int" resultType="board">
+	select
+		boardnum,
+		subjectnum,
+		content,
+		filenum,
+		linknum,
+		inputdate
+	from
+		wiki_board
+	where 
+		subjectnum = #{subjectnum}
+</select>
+	
+
+	
+<!-- 수정 대기 -->
+	<!-- 수정 대기 삽입 -->
+	<insert id="writeWait" parameterType="wait">
+		insert into
+			wiki_wait(
+				updatenum
+				,boardnum
+				,content
+				<if test="filenum != null">
+				,filenum
+				</if>
+				<if test="linknum != null">
+				,linknum
+				</if>
+			)values(
+				wiki_wait_seq.nextval
+				,#{boardnum}
+				,#{content}
+				<if test="filenum != null">
+				,#{filenum}
+				</if>
+				<if test="linknum != null">
+				,#{linknum}
+				</if>
+			)
+	</insert>
+	
+	<!-- 수정대기목록 전체 불러오기 -->
+	<select id="selectWaitAll" resultType="wait">
+		select
+			updatenum
+			,boardnum
+			,content
+			,filenum
+			,linknum
+		from
+			wiki_wait
+		order by
+			updatenum desc
+	</select>
+	
+	
+	
+<!-- 토론장 -->
+<!-- 토론장 등록 -->
+<insert id="writeBoard" parameterType="debate">
+		insert into
+			wiki_debate
+			(
+				debatenum
+				,subjectnum
+				,id
+				,title
+				,content
+			)values(
+				wiki_debate_seq.nextval
+				,#{subjectnum}
+				,#{id}
+				,#{title}
+				,#{content}
+			)
+</insert>
+
+
+<!-- 토론장 전체조회 -->
+<select id="selectAll" resultType="debate" parameterType="hashmap">
+	select
+		debatenum
+		,subjectnum
+		,id
+		,title
+		,content
+		,to_char(inputdate,'yyyy/mm/dd') inputdate
+		,hits
+	from
+		wiki_debate
+	<if test="searchText != null">
+	where
+		${searchSelect} like '%' ||#{searchText} || '%'
+	</if>
+	order by
+		debatenum desc
+</select>
+
+<!-- 토론장 전체조회 -->
+<select id="selectDebateAll" parameterType="hashmap" resultType="debate">
+	select
+		debatenum
+		,subjectnum
+		,id
+		,title
+		,content
+		,to_char(inputdate,'yyyy-MM-dd') inputdate
+		,hits
+	from
+		wiki_debate
+	<if test="searchText != null">
+		where
+			${searchSelect}
+	</if>
+</select>
+
+<!-- 토론장 전체갯수조회 -->
+<select id="getTotal" resultType="int" parameterType="hashmap">
+	select
+		count(*)
+	from
+		wiki_debate
+	<if test="searchText != null">
+	where
+		${searchSelect} like '%' ||#{searchText} || '%'
+	</if>
+</select>
+
+<!-- 글 하나 조회 -->
+<select id="selectOne" parameterType="int" resultType="debate">
+	select
+		debatenum
+		,subjectnum
+		,id
+		,title
+		,content
+		,to_char(inputdate,'yyyy-mm-dd') inputdate
+		,hits
+	from
+		wiki_debate
+	where
+		debatenum = #{debatenum}
+</select>
+
+<!-- 조회수 증가 -->
+<update id="updateHits" parameterType="int">
+	update
+		wiki_debate
+	set
+		hits = hits+1
+	where
+		debatenum = #{debatenum}
+</update>
+
+
+<!-- 글 수정 -->
+<update id="updateBoard" parameterType="debate">
+	update
+		wiki_debate
+	set
+		subjectnum = #{subjectnum}
+		,title = #{title}
+		,content = #{content}
+	where
+		debatenum = #{debatenum}
+	and
+		id = #{id}
+</update>
+
+
+<!-- 글 삭제 -->
+<delete id="deleteBoard" parameterType="debate">
+	delete
+		wiki_debate
+	where
+		debatenum = #{debatenum}
+	and
+		id = #{id}
+</delete>
+
+
+
+<!-- 리플 등록 -->
+<insert id="insertReply" parameterType="reply">
+	insert into
+		wiki_reply
+		(
+			replynum
+			,debatenum
+			,id
+			,text
+		)values(
+			wiki_reply_seq.nextval
+			,#{debatenum}
+			,#{id}
+			,#{text}
+		)		
+</insert>
+
+
+<!-- 리플 조회 -->
+<select id="selectReplyAll" parameterType="int" resultType="reply">
+	select
+		replynum
+		,debatenum
+		,id
+		,text
+		,to_char(inputdate,'yyyy-MM-dd') inputdate
+	from
+		wiki_reply
+	where
+		debatenum = #{debatenum}
+	order by
+		replynum desc
+</select>
+
+<!-- 리플 삭제 -->
+<delete id="deleteReply" parameterType="reply">
+	delete
+		wiki_reply
+	where
+		replynum = #{replynum}
+	and
+		id = #{id}
+</delete>
+
+
+
+<!-- 리플 수정 -->
+<update id="updateReply" parameterType="reply">
+	update
+		wiki_reply
+	set
+		text = #{text}
+	where
+		replynum = #{replynum}
+	and
+		id = #{id}
+</update>
+
+
+
+
+<!-- 파일 -->
+<!-- 파일 저장 -->
+	<insert id="insertFile" parameterType="file">
+		insert into wiki_file (
+			filenum
+			<if test="originalfile != null and savedfile != null">
+			, originalfile
+			, savedfile
+			</if>
+		)
+		values (
+			wiki_file_seq.nextval
+			<if test="originalfile != null and savedfile != null">
+			, #{originalfile}
+			, #{savedfile}
+			</if>
+		)
+	</insert>
+	
+	<!-- 파일 읽기 -->
+	<select id="getFile" parameterType="int" resultType="file">
+		select 
+			filenum
+			, originalfile
+			, savedfile
+		from 
+			wiki_file 
+		where 
+			filenum = #{filenum}
+	</select>
+	
+	<select id="selelctFilenum" resultType="int">
+		select
+			MAX(filenum)
+		from
+			wiki_file
+	</select>
+
+	<!-- 파일 전체 목록 불러오기 -->
+	<select id="selectFileAll" resultType="file">
+		select
+			filenum
+			,originalfile
+			,savedfile
+		from
+			wiki_file
+		order by
+			filenum
+	</select>
+
+
+<!-- 링크 -->
+	<!-- 링크등록 -->
+	<insert id="writeLink" parameterType="link">
+		insert into
+			wiki_link(
+				linknum
+				,linkaddress
+			)values(
+				wiki_link_seq.nextval
+				,#{linkaddress}
+			)
+	</insert>
+
+
+	<!-- 링크 전체 목록 불러오기 -->
+	<select id="selectLinkAll" resultType="link">
+		select
+			linknum
+			,linkaddress
+		from
+			wiki_link
+		order by
+			linknum
+	</select>
+
+
+
+</mapper>
